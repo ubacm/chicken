@@ -45,6 +45,7 @@ Creates a new event, and provides a
   weight: Float, // Optional, Default: 1.0
   slack_id: String
 }
+```
 
 ### Response
 * Success: Response Code 200
