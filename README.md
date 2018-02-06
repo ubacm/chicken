@@ -14,7 +14,7 @@ Allows a user to check into an event.
 ```
 ### Response
 * Success: Response Code 200
-* Failure - Wrong API Key: Response Code 401
+* Failure - Bad API Key: Response Code 401
 * Failure - Wrong Check In Code: Response Code 403
 * Failure - Slack ID Not Found: Response Code 404
 ```node
@@ -55,8 +55,8 @@ Creates a new event, and provides a
   check_in_code: String
 }
 ```
-
-* Failure - Wrong API Key: Response Code 401
+* Failure - Missing Fields: Response Code 400
+* Failure - Bad API Key: Response Code 401
 * Failure - Not an Admin in Slack team: Response Code 401
 * Failure - Wrong Check In Code: Response Code 403
 * Failure - Slack ID Not Found: Response Code 404
