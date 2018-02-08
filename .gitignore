@@ -1,0 +1,11 @@
+# Virtualenv
+venv/
+
+# pycache
+__pycache__/
+
+# config file
+config.py
+
+# DS_Store
+.DS_Store
