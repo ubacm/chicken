@@ -14,9 +14,8 @@ db = client.chicken
 @app.route('/checkin', methods=['POST'])
 @verify_api_key
 def check_in():
-    json = request.get_json()
-    check_in_code = json.get('check_in_code')
-    slack_id = json.get('slack_id')
+    check_in_code = request.get_json().get('check_in_code')
+    slack_id = request.headers.get('slack_id')
 
     # First verify the user is valid
     if not verify_user(slack_id):
