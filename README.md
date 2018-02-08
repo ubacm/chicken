@@ -57,7 +57,7 @@ Shows all events.
             "check_in_code": String,
             "deleted": Boolean,
             "description": String,
-            "name": "String,
+            "name": String,
             "slack_id": String,
             "timestamp": String,
             "weight": Integer
@@ -107,7 +107,7 @@ Shows all active events.
             "check_in_code": String,
             "deleted": Boolean,
             "description": String,
-            "name": "String,
+            "name": String,
             "slack_id": String,
             "timestamp": String,
             "weight": Integer
