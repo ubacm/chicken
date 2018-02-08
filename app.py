@@ -4,11 +4,17 @@ from datetime import datetime
 from verification import verify_user, verify_api_key, verify_admin
 from utils import generate_check_in_code, toggle_active_delete
 
-app = Flask(__name__)
 
+app = Flask(__name__)
 
 client = MongoClient()
 db = client.chicken
+
+# Responses
+SUCCESS = {'message': 'Success'} # 200
+SLACK_ID_NOT_FOUND = {'message': 'Slack ID Not Found'} # 404
+WRONG_CHECK_IN_CODE = {'message': 'Wrong Check In Code'} # 403
+MISSING_FIELDS = {'message': 'Missing Fields'} # 400
 
 
 @app.route('/checkin', methods=['POST'])
@@ -19,14 +25,14 @@ def check_in():
 
     # First verify the user is valid
     if not verify_user(slack_id):
-        return jsonify({'message': 'Slack ID Not Found'}), 404
+        return jsonify(SLACK_ID_NOT_FOUND), 404
 
     # Then verify the event exists and is active
     events = db.events
     event = events.find_one({'check_in_code': check_in_code})
 
     if event is None or not event.get('active'):
-        return jsonify({'message': 'Wrong Check In Code'}), 403
+        return jsonify(WRONG_CHECK_IN_CODE), 403
 
     score = event.get('weight')
 
@@ -57,7 +63,7 @@ def check_in():
         events.update_one({'check_in_code': check_in_code}, {
                           '$push': {'attendees': slack_id}})
 
-    return jsonify({'message': 'Success'}), 200
+    return jsonify(SUCCESS), 200
 
 
 @app.route('/event/new', methods=['POST'])
@@ -78,7 +84,7 @@ def start_checkin():
         weight = 1.0
 
     if name is None or description is None or slack_id is None:
-        return jsonify({'message': 'Missing Fields'}), 400
+        return jsonify(MISSING_FIELDS), 400
 
     check_in_code = generate_check_in_code()
 
@@ -141,7 +147,7 @@ def reactivate_event():
     check_in_code = request.get_json().get('check_in_code')
     toggle_active_delete(db, check_in_code, active=True)
 
-    return jsonify({'message': 'Success'}), 200
+    return jsonify(SUCCESS), 200
 
 
 @app.route('/event/close', methods=['PUT'])
@@ -149,9 +155,14 @@ def reactivate_event():
 @verify_admin
 def close_event():
     check_in_code = request.get_json().get('check_in_code')
+    event = db.events.find_one({'check_in_code': check_in_code})
+
+    if event is None or event.get('deleted'):
+        return jsonify(WRONG_CHECK_IN_CODE), 403
+
     toggle_active_delete(db, check_in_code, active=False)
 
-    return jsonify({'message': 'Success'}), 200
+    return jsonify(SUCCESS), 200
 
 
 @app.route('/event/delete', methods=['PUT'])
@@ -162,11 +173,11 @@ def delete_event():
     event = db.events.find_one({'check_in_code': check_in_code})
 
     if event is None or event.get('deleted'):
-        return jsonify({'message': 'Wrong Check In Code'}), 403
+        return jsonify(WRONG_CHECK_IN_CODE), 403
 
     toggle_active_delete(db, check_in_code, active=False, delete=True)
 
-    return jsonify({'message': 'Success'}), 200
+    return jsonify(SUCCESS), 200
 
 
 @app.route('/event/reactivate', methods=['PUT'])
@@ -177,11 +188,11 @@ def restore_event():
     event = db.events.find_one({'check_in_code': check_in_code})
 
     if event is None or not event.get('deleted'):
-        return jsonify({'message': 'Wrong Check In Code'}), 403
+        return jsonify(WRONG_CHECK_IN_CODE), 403
 
     toggle_active_delete(db, check_in_code, active=True, delete=False)
 
-    return jsonify({'message': 'Success'}), 200
+    return jsonify(SUCCESS), 200
 
 
 # Runs the app (in debug mode)
