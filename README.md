@@ -1,7 +1,7 @@
 # chicken
 The check in system for UB ACM events.
 
-## `/checkin`
+## `POST /checkin`
 Allows a user to check into an event.
 
 ### Request
@@ -27,7 +27,7 @@ Allows a user to check into an event.
 }
 ```
 
-## `/event/list`
+## `GET /event/list`
 Shows all events.
 
 ### Request
@@ -77,7 +77,7 @@ Shows all events.
 ```
 
 
-## `/event/list/active`
+## `GET /event/list/active`
 Shows all active events.
 
 ### Request
@@ -126,7 +126,7 @@ Shows all active events.
 }
 ```
 
-## `/event/new`
+## `POST /event/new`
 Creates a new event.
 
 ### Request
@@ -164,7 +164,7 @@ Creates a new event.
 }
 ```
 
-## `/event/close`
+## `PUT /event/close`
 Closes an event provided with an ID.
 
 ### Request
@@ -194,8 +194,8 @@ Closes an event provided with an ID.
 ```
 
 
-## `/event/reopen`
-Reopens an previously closed event provided with an ID.
+## `PUT /event/reopen`
+Reopens a previously closed event provided with an ID.
 
 ### Request
 ##### Header
@@ -222,7 +222,7 @@ Reopens an previously closed event provided with an ID.
 }
 ```
 
-## `/event/delete`
+## `PUT /event/delete`
 Soft-deletes an event from the database. All check-ins for this event is invalid.
 
 ### Request
@@ -251,7 +251,7 @@ Soft-deletes an event from the database. All check-ins for this event is invalid
 ```
 
 
-## `/event/reactivate`
+## `PUT /event/reactivate`
 Restores a previously deleted event provided with an ID.
 
 ### Request
@@ -278,6 +278,3 @@ Restores a previously deleted event provided with an ID.
   message: String
 }
 ```
-
-
-
