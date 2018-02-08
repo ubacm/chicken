@@ -44,6 +44,27 @@ Shows all events.
 ```
 ### Response
 * Success: Response Code 200
+```node
+{
+    "events": [
+        {
+            "_id": String,
+            "active": Boolean,
+            "attendees": [
+                String,
+                ...
+            ],
+            "check_in_code": String,
+            "deleted": Boolean,
+            "description": String,
+            "name": "String,
+            "slack_id": String,
+            "timestamp": String,
+            "weight": Integer
+        }, 
+        ...
+}
+```
 * Failure - Missing Fields: Response Code 400
 * Failure - Bad API Key: Response Code 401
 * Failure - Not an Admin in Slack team: Response Code 401
@@ -69,6 +90,39 @@ Shows all active events.
 ```node
 {
   check_in_code: String
+}
+```
+### Response
+* Success: Response Code 200
+```node
+{
+    "events": [
+        {
+            "_id": String,
+            "active": Boolean,
+            "attendees": [
+                String,
+                ...
+            ],
+            "check_in_code": String,
+            "deleted": Boolean,
+            "description": String,
+            "name": "String,
+            "slack_id": String,
+            "timestamp": String,
+            "weight": Integer
+        }, 
+        ...
+}
+```
+* Failure - Missing Fields: Response Code 400
+* Failure - Bad API Key: Response Code 401
+* Failure - Not an Admin in Slack team: Response Code 401
+* Failure - Wrong Check In Code: Response Code 403
+* Failure - Slack ID Not Found: Response Code 404
+```node
+{
+  message: String
 }
 ```
 
