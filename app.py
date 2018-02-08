@@ -145,6 +145,11 @@ def list_active_events():
 @verify_admin
 def reactivate_event():
     check_in_code = request.get_json().get('check_in_code')
+    event = db.events.find_one({'check_in_code': check_in_code})
+
+    if event is None or event.get('active'):
+        return jsonify(WRONG_CHECK_IN_CODE), 403
+
     toggle_active_delete(db, check_in_code, active=True)
 
     return jsonify(SUCCESS), 200
@@ -157,7 +162,7 @@ def close_event():
     check_in_code = request.get_json().get('check_in_code')
     event = db.events.find_one({'check_in_code': check_in_code})
 
-    if event is None or event.get('deleted'):
+    if event is None or event.get('deleted') or not event.get('active'):
         return jsonify(WRONG_CHECK_IN_CODE), 403
 
     toggle_active_delete(db, check_in_code, active=False)
@@ -187,7 +192,7 @@ def restore_event():
     check_in_code = request.get_json().get('check_in_code')
     event = db.events.find_one({'check_in_code': check_in_code})
 
-    if event is None or not event.get('deleted'):
+    if event is None or not event.get('active'):
         return jsonify(WRONG_CHECK_IN_CODE), 403
 
     toggle_active_delete(db, check_in_code, active=True, delete=False)
