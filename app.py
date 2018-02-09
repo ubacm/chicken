@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, redirect
 from pymongo import MongoClient
 from datetime import datetime
 from verification import verify_user, verify_api_key, verify_admin
@@ -13,7 +13,7 @@ db = client.chicken
 
 @app.route('/')
 def index():
-    return "hello world"
+    return redirect('https://github.com/ubacm/chicken')
 
 
 @app.route('/checkin', methods=['POST'])
