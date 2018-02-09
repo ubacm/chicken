@@ -198,6 +198,6 @@ def restore_event():
     return jsonify(SUCCESS), 200
 
 
-# Runs the app (in debug mode)
+# Runs the app
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run()
