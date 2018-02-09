@@ -4,6 +4,7 @@ from datetime import datetime
 from verification import verify_user, verify_api_key, verify_admin
 from utils import generate_check_in_code, toggle_active_delete
 from config import SUCCESS, SLACK_ID_NOT_FOUND, WRONG_CHECK_IN_CODE, MISSING_FIELDS
+import os
 
 app = Flask(__name__)
 
@@ -200,4 +201,4 @@ def restore_event():
 
 # Runs the app
 if __name__ == "__main__":
-    app.run()
+    app.run(port=int(os.environ.get("PORT", 5000)))
