@@ -4,8 +4,6 @@ import requests
 from config import SLACK_TOKEN, API_KEY, BAD_API_KEY, NOT_AN_ADMIN, SLACK_ID_NOT_FOUND
 
 
-
-
 def verify_user(slack_id):
     url = 'https://slack.com/api/users.info?user=%s&token=%s' % (
         slack_id, SLACK_TOKEN)
