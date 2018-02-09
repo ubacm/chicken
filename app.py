@@ -3,18 +3,12 @@ from pymongo import MongoClient
 from datetime import datetime
 from verification import verify_user, verify_api_key, verify_admin
 from utils import generate_check_in_code, toggle_active_delete
-
+from config import SUCCESS, SLACK_ID_NOT_FOUND, WRONG_CHECK_IN_CODE, MISSING_FIELDS
 
 app = Flask(__name__)
 
 client = MongoClient()
 db = client.chicken
-
-# Responses
-SUCCESS = {'message': 'Success'} # 200
-SLACK_ID_NOT_FOUND = {'message': 'Slack ID Not Found'} # 404
-WRONG_CHECK_IN_CODE = {'message': 'Wrong Check In Code'} # 403
-MISSING_FIELDS = {'message': 'Missing Fields'} # 400
 
 
 @app.route('/checkin', methods=['POST'])
