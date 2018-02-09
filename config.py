@@ -1,5 +1,7 @@
-API_KEY = 'API_KEY'
-SLACK_TOKEN = 'SLACK_TOKEN'
+import os
+
+API_KEY = os.environ.get("API_KEY")
+SLACK_TOKEN = os.environ.get("SLACK_TOKEN")
 
  # Responses
 SUCCESS = {'message': 'Success'} # 200

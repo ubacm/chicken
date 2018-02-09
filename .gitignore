@@ -5,7 +5,7 @@ venv/
 __pycache__/
 
 # config file
-config.py
+config.old.py
 
 # DS_Store
 .DS_Store
