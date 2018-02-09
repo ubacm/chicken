@@ -10,6 +10,10 @@ app = Flask(__name__)
 client = MongoClient()
 db = client.chicken
 
+@app.route('/')
+def index():
+    return "hello world"
+
 
 @app.route('/checkin', methods=['POST'])
 @verify_api_key
