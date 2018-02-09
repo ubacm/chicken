@@ -1,7 +1,8 @@
 import os
 
-API_KEY = os.environ.get("API_KEY")
-SLACK_TOKEN = os.environ.get("SLACK_TOKEN")
+API_KEY = os.environ.get('API_KEY')
+SLACK_TOKEN = os.environ.get('SLACK_TOKEN')
+MONGO_URI = os.environ.get('MONGO_URI')
 
  # Responses
 SUCCESS = {'message': 'Success'} # 200

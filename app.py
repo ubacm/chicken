@@ -3,12 +3,12 @@ from pymongo import MongoClient
 from datetime import datetime
 from verification import verify_user, verify_api_key, verify_admin
 from utils import generate_check_in_code, toggle_active_delete
-from config import SUCCESS, SLACK_ID_NOT_FOUND, WRONG_CHECK_IN_CODE, MISSING_FIELDS
+from config import SUCCESS, SLACK_ID_NOT_FOUND, WRONG_CHECK_IN_CODE, MISSING_FIELDS, MONGO_URI
 import os
 
 app = Flask(__name__)
 
-client = MongoClient()
+client = MongoClient(MONGO_URI)
 db = client.chicken
 
 @app.route('/')
