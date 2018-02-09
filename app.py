@@ -134,21 +134,6 @@ def list_active_events():
     return jsonify({'events': all_events}), 200
 
 
-@app.route('/event/reopen', methods=['PUT'])
-@verify_api_key
-@verify_admin
-def reactivate_event():
-    check_in_code = request.get_json().get('check_in_code')
-    event = db.events.find_one({'check_in_code': check_in_code})
-
-    if event is None or event.get('active'):
-        return jsonify(WRONG_CHECK_IN_CODE), 403
-
-    toggle_active_delete(db, check_in_code, active=True)
-
-    return jsonify(SUCCESS), 200
-
-
 @app.route('/event/close', methods=['PUT'])
 @verify_api_key
 @verify_admin
@@ -160,6 +145,21 @@ def close_event():
         return jsonify(WRONG_CHECK_IN_CODE), 403
 
     toggle_active_delete(db, check_in_code, active=False)
+
+    return jsonify(SUCCESS), 200
+
+
+@app.route('/event/reopen', methods=['PUT'])
+@verify_api_key
+@verify_admin
+def reactivate_event():
+    check_in_code = request.get_json().get('check_in_code')
+    event = db.events.find_one({'check_in_code': check_in_code})
+
+    if event is None or event.get('active'):
+        return jsonify(WRONG_CHECK_IN_CODE), 403
+
+    toggle_active_delete(db, check_in_code, active=True)
 
     return jsonify(SUCCESS), 200
 
