@@ -86,6 +86,15 @@ def start_checkin():
         return jsonify(MISSING_FIELDS), 400
 
     check_in_code = generate_check_in_code()
+    events = db.events
+
+    while True:
+        event_in_db = events.find_one({"check_in_code": check_in_code})
+        if event_in_db is not None:
+            check_in_code = generate_check_in_code()
+        else:
+            break
+    
 
     # Create the event and insert it into the database
     event = {
@@ -100,7 +109,6 @@ def start_checkin():
         'attendees': []
     }
 
-    events = db.events
     result = events.insert_one(event)
 
     return jsonify({
@@ -191,7 +199,7 @@ def restore_event():
     check_in_code = request.get_json().get('check_in_code')
     event = db.events.find_one({'check_in_code': check_in_code})
 
-    if event is None or not event.get('active'):
+    if event is None or not event.get('deleted'):
         return jsonify(WRONG_CHECK_IN_CODE), 403
 
     toggle_active_delete(db, check_in_code, active=True, delete=False)
