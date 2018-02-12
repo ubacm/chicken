@@ -12,3 +12,7 @@ config.old.py
 
 # VS Code
 .vscode/
+
+# Score Migration
+scores.csv
+migrate.py
