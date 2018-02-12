@@ -33,8 +33,6 @@ def check_in():
     if event is None or not event.get('active'):
         return jsonify(WRONG_CHECK_IN_CODE), 403
 
-    score = event.get('weight')
-
     # Then query for the user
     users = db.users
     user = users.find_one({'slack_id': slack_id})
@@ -43,14 +41,13 @@ def check_in():
         user = {
             'slack_id': slack_id,
             'events': [],
-            'score': score
+            'score': 0
         }
-
         db.users.insert_one(user)
 
     # If they exist, add this check-in code
     if check_in_code not in user.get('events'):
-        new_score = user.get('score') + score
+        new_score = user.get('score') + event.get('weight')
         users.update_one({'slack_id': slack_id}, {
             '$push': {'events': check_in_code}})
 
@@ -71,7 +68,6 @@ def check_in():
 def start_checkin():
     json = request.get_json()
     name = json.get('name')
-    description = json.get('description')
     timestamp = json.get('timestamp')
     weight = json.get('weight')
     slack_id = request.headers.get('slack_id')
@@ -95,11 +91,9 @@ def start_checkin():
         else:
             break
     
-
     # Create the event and insert it into the database
     event = {
         'name': name,
-        'description': description,
         'timestamp': timestamp,
         'weight': weight,
         'slack_id': slack_id,
