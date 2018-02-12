@@ -78,7 +78,7 @@ def start_checkin():
     if weight is None:
         weight = 1.0
 
-    if name is Noneg or slack_id is None:
+    if name is None or slack_id is None:
         return jsonify(MISSING_FIELDS), 400
 
     check_in_code = generate_check_in_code()
