@@ -78,7 +78,7 @@ def start_checkin():
     if weight is None:
         weight = 1.0
 
-    if name is None or slack_id is None:
+    if name is Noneg or slack_id is None:
         return jsonify(MISSING_FIELDS), 400
 
     check_in_code = generate_check_in_code()
@@ -199,6 +199,24 @@ def restore_event():
     toggle_active_delete(db, check_in_code, active=True, delete=False)
 
     return jsonify(SUCCESS), 200
+
+@app.route('/score', methods=['GET'])
+@verify_api_key
+def get_score():
+    slack_id = request.headers.get('slack_id')
+
+    # verify this is a slack user
+    if not verify_user(slack_id):
+        return jsonify(SLACK_ID_NOT_FOUND), 404
+    
+    # check if the user is in db, add if not
+    user = db.users.find_one({"slack_id": slack_id})
+
+    if user is None:
+        return jsonify({"score": 0})
+    
+    return jsonify({"score": user.get('score')})
+    
 
 
 # Runs the app
