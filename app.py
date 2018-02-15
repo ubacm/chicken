@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request, redirect
+from flask import Flask, jsonify, request, redirect, render_template
 from pymongo import MongoClient
 from datetime import datetime
 from verification import verify_user, verify_api_key, verify_admin
@@ -90,7 +90,7 @@ def start_checkin():
             check_in_code = generate_check_in_code()
         else:
             break
-    
+
     # Create the event and insert it into the database
     event = {
         'name': name,
@@ -208,17 +208,21 @@ def get_score():
     # verify this is a slack user
     if not verify_user(slack_id):
         return jsonify(SLACK_ID_NOT_FOUND), 404
-    
+
     # check if the user is in db, add if not
     user = db.users.find_one({"slack_id": slack_id})
 
     if user is None:
         return jsonify({"score": 0})
-    
+
     return jsonify({"score": user.get('score')})
-    
+
+@app.route('/users/scores', methods=['GET'])
+def get_all_scores():
+    users = db.users.find({})
+    return render_template("users.html", users=users)
 
 
 # Runs the app
 if __name__ == "__main__":
-    app.run(port=int(os.environ.get("PORT", 5000)))
+    app.run(port=int(os.environ.get("PORT", 5000)), debug=True)
