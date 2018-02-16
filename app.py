@@ -236,7 +236,7 @@ def get_all_scores():
 @verify_api_key
 @verify_admin
 def edit_score():
-    slack_id = request.headers.get('slack_id')
+    slack_id = request.get_json().get('slack_id')
     score = request.get_json().get('score')
 
     if score is None:
