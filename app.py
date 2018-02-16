@@ -91,7 +91,7 @@ def start_checkin():
     events = db.events
 
     while True:
-        event_in_db = events.find_one({"check_in_code": check_in_code})
+        event_in_db = events.find_one({'check_in_code': check_in_code})
         if event_in_db is not None:
             check_in_code = generate_check_in_code()
         else:
@@ -217,21 +217,48 @@ def get_score():
         return jsonify(SLACK_ID_NOT_FOUND), 404
 
     # check if the user is in db, add if not
-    user = db.users.find_one({"slack_id": slack_id})
+    user = db.users.find_one({'slack_id': slack_id})
 
     if user is None:
-        return jsonify({"score": 0})
+        return jsonify({'score': 0})
 
-    return jsonify({"score": user.get('score')})
+    return jsonify({'score': user.get('score')})
 
 
 @app.route('/users/scores', methods=['GET'])
 def get_all_scores():
     users = db.users.find({})
     users = sorted(users, key=lambda x: x['score'], reverse=True)
-    return render_template("users.html", users=users)
+    return render_template('users.html', users=users)
+
+
+@app.route('/users/scores/edit', methods=['POST'])
+@verify_api_key
+@verify_admin
+def edit_score():
+    slack_id = request.headers.get('slack_id')
+    score = request.get_json().get('score')
+
+    if score is None:
+        return jsonify(MISSING_FIELDS), 400
+
+    # verify this is a slack user
+    if not verify_user(slack_id):
+        return jsonify(SLACK_ID_NOT_FOUND), 404
+
+    user = db.users.find_one({'slack_id': slack_id})
+
+    updated_score = user.get('score') + request.get_json().get('score')
+
+    if user is not None:
+        db.users.update_one({'slack_id': slack_id}, {
+                            '$set': {'score': updated_score}})
+        return jsonify(SUCCESS), 200
+
+    return jsonify(SLACK_ID_NOT_FOUND), 404
+
 
 
 # Runs the app
-if __name__ == "__main__":
-    app.run(port=int(os.environ.get("PORT", 5000)), debug=True)
+if __name__ == '__main__':
+    app.run(port=int(os.environ.get('PORT', 5000)), debug=True)
