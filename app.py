@@ -228,6 +228,7 @@ def get_score():
 @app.route('/users/scores', methods=['GET'])
 def get_all_scores():
     users = db.users.find({})
+    users = sorted(users, key=lambda x: x['score'])
     return render_template("users.html", users=users)
 
 
