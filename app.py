@@ -22,6 +22,10 @@ def index():
 def check_in():
     check_in_code = request.get_json().get('check_in_code')
     slack_id = request.headers.get('slack_id')
+    username = request.get_json().get('username')
+
+    if username is None:
+        return jsonify(MISSING_FIELDS), 400
 
     # First verify the user is valid
     if not verify_user(slack_id):
@@ -40,6 +44,7 @@ def check_in():
 
     if user is None:
         user = {
+            'username': username,
             'slack_id': slack_id,
             'events': [],
             'score': 0
