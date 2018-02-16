@@ -11,9 +11,10 @@ app = Flask(__name__)
 client = MongoClient(MONGO_URI)
 db = client.chicken
 
+
 @app.route('/')
 def index():
-    return redirect('https://github.com/ubacm/chicken')
+    return redirect('/users/scores')
 
 
 @app.route('/checkin', methods=['POST'])
@@ -200,6 +201,7 @@ def restore_event():
 
     return jsonify(SUCCESS), 200
 
+
 @app.route('/score', methods=['GET'])
 @verify_api_key
 def get_score():
@@ -216,6 +218,7 @@ def get_score():
         return jsonify({"score": 0})
 
     return jsonify({"score": user.get('score')})
+
 
 @app.route('/users/scores', methods=['GET'])
 def get_all_scores():
