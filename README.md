@@ -13,7 +13,8 @@ Allows a user to check into an event.
 ##### Body
 ```node
 {
-  check_in_code: String
+  check_in_code: String,
+  username: String
 }
 ```
 ### Response
@@ -61,7 +62,7 @@ Shows all events.
             "slack_id": String,
             "timestamp": String,
             "weight": Integer
-        }, 
+        },
         ...
 }
 ```
@@ -111,7 +112,7 @@ Shows all active events.
             "slack_id": String,
             "timestamp": String,
             "weight": Integer
-        }, 
+        },
         ...
 }
 ```
@@ -264,6 +265,38 @@ Restores a previously deleted event provided with an ID.
 ```node
 {
   check_in_code: String
+}
+```
+### Response
+* Success: Response Code 200
+* Failure - Missing Fields: Response Code 400
+* Failure - Bad API Key: Response Code 401
+* Failure - Not an Admin in Slack team: Response Code 401
+* Failure - Wrong Check In Code: Response Code 403
+* Failure - Slack ID Not Found: Response Code 404
+```node
+{
+  message: String
+}
+```
+
+## `GET /users/scores`
+Renders a page with all users and their scores.
+
+## `POST /users/scores/edit`
+Add the score passed in to the users current score. So to add pass a positive number and to subtract, send a negative number. The `slack_id` in the header is the admin id and the `slack_id` in the body is for the user that will be updated.
+
+### Request
+##### Header
+```node
+  api_key: String,
+  slack_id: String
+```
+##### Body
+```node
+{
+  score: Float,
+  slack_id: String
 }
 ```
 ### Response
