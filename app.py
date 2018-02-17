@@ -268,7 +268,7 @@ def view_attendees(check_in_code):
             user = db.users.find_one({'slack_id': attendee})
             users.append(user.get('username'))
 
-    return render_template("events.html", users=users, event=event)
+    return render_template("events.html", users=users, event=event, count=len(users))
 
 # Runs the app
 if __name__ == '__main__':

@@ -7,7 +7,8 @@
 </head>
 
 <body>
-  {{ event.name }} - {{ event.check_in_code }}
+  {{ event.name }} - {{ event.check_in_code }}</br>
+  # of attendees - {{ count }}
   <ul style="list-style: none;">
     {% for user in users %}
     <li>{{ user }}</li>
