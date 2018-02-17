@@ -257,7 +257,18 @@ def edit_score():
 
     return jsonify(SLACK_ID_NOT_FOUND), 404
 
+@app.route('/events/<check_in_code>', methods=['GET'])
+def view_attendees(check_in_code):
+    event = db.events.find_one({'check_in_code': check_in_code})
 
+    users = []
+
+    if event is not None:
+        for attendee in event.get('attendees'):
+            user = db.users.find_one({'slack_id': attendee})
+            users.append(user.get('username'))
+
+    return render_template("events.html", users=users, event=event)
 
 # Runs the app
 if __name__ == '__main__':
