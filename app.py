@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request, redirect, render_template
+from flask import Flask, jsonify, request, redirect
 from pymongo import MongoClient
 from datetime import datetime
 from verification import verify_user, verify_api_key, verify_admin
@@ -265,6 +265,7 @@ def edit_score():
 @app.route('/events/<check_in_code>', methods=['GET'])
 def view_attendees(check_in_code):
     event = db.events.find_one({'check_in_code': check_in_code})
+    event.pop('_id')
 
     users = []
 
@@ -273,10 +274,15 @@ def view_attendees(check_in_code):
             user = db.users.find_one({'slack_id': attendee})
             users.append(user.get('username'))
 
-    return render_template("events.html",
-                           users=users,
-                           event=event,
-                           count=len(users))
+    return jsonify({
+        "event": event,
+        "users": users,
+        "count": len(users)
+    })
+    # return render_template("events.html",
+    #                        users=users,
+    #                        event=event,
+    #                        count=len(users))
 
 
 # Runs the app
