@@ -265,7 +265,7 @@ def edit_score():
 @app.route('/events/<check_in_code>', methods=['GET'])
 def view_attendees(check_in_code):
     event = db.events.find_one({'check_in_code': check_in_code})
-    event.pop('_id')
+    event.pop('_id', None)
 
     users = []
 
@@ -274,15 +274,13 @@ def view_attendees(check_in_code):
             user = db.users.find_one({'slack_id': attendee})
             users.append(user.get('username'))
 
+    event.pop('attendees', None)
+
     return jsonify({
         "event": event,
-        "users": users,
+        "attendees": users,
         "count": len(users)
     })
-    # return render_template("events.html",
-    #                        users=users,
-    #                        event=event,
-    #                        count=len(users))
 
 
 # Runs the app
