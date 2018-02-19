@@ -230,15 +230,10 @@ def get_all_scores():
     users = db.users.find({})
     users = sorted(users, key=lambda x: x['score'], reverse=True)
 
-    serialized_users = []
+    for i in range(0, len(users)):
+        users[i].pop('_id', None)
 
-    # Serialize the object id
-    for user in users:
-        user['_id'] = str(user['_id'])
-        serialized_users.append(user)
-
-    return jsonify(serialized_users)
-    # return render_template('users.html', users=users)
+    return jsonify(users)
 
 
 @app.route('/users/scores/edit', methods=['POST'])
