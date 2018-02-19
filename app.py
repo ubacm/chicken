@@ -230,7 +230,14 @@ def get_all_scores():
     users = db.users.find({})
     users = sorted(users, key=lambda x: x['score'], reverse=True)
 
-    return jsonify(users)
+    serialized_users = []
+
+    # Serialize the object id
+    for user in users:
+        user['_id'] = str(user['_id'])
+        serialized_users.append(user)
+
+    return jsonify(serialized_users)
     # return render_template('users.html', users=users)
 
 
