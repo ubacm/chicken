@@ -430,7 +430,7 @@ the event as a parameter.
     slack_id: String,
     timestamp: String,
     weight: Integer
-  }
+  },
   attendees: [String, String, ...],
   count: Integer
 }
