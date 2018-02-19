@@ -265,6 +265,10 @@ def edit_score():
 @app.route('/events/<check_in_code>', methods=['GET'])
 def view_attendees(check_in_code):
     event = db.events.find_one({'check_in_code': check_in_code})
+
+    if event is None:
+        return jsonify(con.WRONG_CHECK_IN_CODE), 403
+
     event.pop('_id', None)
 
     users = []

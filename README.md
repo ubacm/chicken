@@ -1,27 +1,36 @@
 # chicken
+
 The check in system for UB ACM events.
 
 ## `POST /checkin`
+
 Allows a user to check into an event.
 
 ### Request
-##### Header
+
+#### Header
+
 ```node
   api_key: String,
   slack_id: String
 ```
-##### Body
+
+#### Body
+
 ```node
 {
   check_in_code: String,
   username: String
 }
 ```
+
 ### Response
+
 * Success: Response Code 200
 * Failure - Bad API Key: Response Code 401
 * Failure - Wrong Check In Code: Response Code 403
 * Failure - Slack ID Not Found: Response Code 404
+
 ```node
 {
   message: String
@@ -29,22 +38,30 @@ Allows a user to check into an event.
 ```
 
 ## `GET /event/list`
+
 Shows all events.
 
 ### Request
-##### Header
+
+#### Header
+
 ```node
   api_key: String,
   slack_id: String
 ```
-##### Body
+
+#### Body
+
 ```node
 {
   check_in_code: String
 }
 ```
+
 ### Response
+
 * Success: Response Code 200
+
 ```node
 {
     "events": [
@@ -66,35 +83,44 @@ Shows all events.
         ...
 }
 ```
+
 * Failure - Missing Fields: Response Code 400
 * Failure - Bad API Key: Response Code 401
 * Failure - Not an Admin in Slack team: Response Code 401
 * Failure - Wrong Check In Code: Response Code 403
 * Failure - Slack ID Not Found: Response Code 404
+
 ```node
 {
   message: String
 }
 ```
 
-
 ## `GET /event/list/active`
+
 Shows all active events.
 
 ### Request
-##### Header
+
+#### Header
+
 ```node
   api_key: String,
   slack_id: String
 ```
-##### Body
+
+#### Body
+
 ```node
 {
   check_in_code: String
 }
 ```
+
 ### Response
+
 * Success: Response Code 200
+
 ```node
 {
     "events": [
@@ -116,11 +142,13 @@ Shows all active events.
         ...
 }
 ```
+
 * Failure - Missing Fields: Response Code 400
 * Failure - Bad API Key: Response Code 401
 * Failure - Not an Admin in Slack team: Response Code 401
 * Failure - Wrong Check In Code: Response Code 403
 * Failure - Slack ID Not Found: Response Code 404
+
 ```node
 {
   message: String
@@ -128,15 +156,20 @@ Shows all active events.
 ```
 
 ## `POST /event/new`
+
 Creates a new event.
 
 ### Request
-##### Header
+
+#### Header
+
 ```node
   api_key: String,
   slack_id: String
 ```
-##### Body
+
+#### Body
+
 ```node
 {
   name: String,
@@ -147,18 +180,22 @@ Creates a new event.
 ```
 
 ### Response
+
 * Success: Response Code 200
+
 ```node
 {
   event_id: Integer,
   check_in_code: String
 }
 ```
+
 * Failure - Missing Fields: Response Code 400
 * Failure - Bad API Key: Response Code 401
 * Failure - Not an Admin in Slack team: Response Code 401
 * Failure - Wrong Check In Code: Response Code 403
 * Failure - Slack ID Not Found: Response Code 404
+
 ```node
 {
   message: String
@@ -166,15 +203,20 @@ Creates a new event.
 ```
 
 ## `PUT /event/close`
+
 Closes an event provided with an ID.
 
 ### Request
-##### Header
+
+#### Header
+
 ```node
   api_key: String,
   slack_id: String
 ```
-##### Body
+
+#### Body
+
 ```node
 {
   check_in_code: String
@@ -182,41 +224,50 @@ Closes an event provided with an ID.
 ```
 
 ### Response
+
 * Success: Response Code 200
 * Failure - Missing Fields: Response Code 400
 * Failure - Bad API Key: Response Code 401
 * Failure - Not an Admin in Slack team: Response Code 401
 * Failure - Wrong Check In Code: Response Code 403
 * Failure - Slack ID Not Found: Response Code 404
+
 ```node
 {
   message: String
 }
 ```
 
-
 ## `PUT /event/reopen`
+
 Reopens a previously closed event provided with an ID.
 
 ### Request
-##### Header
+
+#### Header
+
 ```node
   api_key: String,
   slack_id: String
 ```
-##### Body
+
+#### Body
+
 ```node
 {
   check_in_code: String
 }
 ```
+
 ### Response
+
 * Success: Response Code 200
 * Failure - Missing Fields: Response Code 400
 * Failure - Bad API Key: Response Code 401
 * Failure - Not an Admin in Slack team: Response Code 401
 * Failure - Wrong Check In Code: Response Code 403
 * Failure - Slack ID Not Found: Response Code 404
+
 ```node
 {
   message: String
@@ -224,56 +275,71 @@ Reopens a previously closed event provided with an ID.
 ```
 
 ## `PUT /event/delete`
+
 Soft-deletes an event from the database. All check-ins for this event is invalid.
 
 ### Request
-##### Header
+
+#### Header
+
 ```node
   api_key: String,
   slack_id: String
 ```
-##### Body
+
+#### Body
+
 ```node
 {
   check_in_code: String
 }
 ```
+
 ### Response
+
 * Success: Response Code 200
 * Failure - Missing Fields: Response Code 400
 * Failure - Bad API Key: Response Code 401
 * Failure - Not an Admin in Slack team: Response Code 401
 * Failure - Wrong Check In Code: Response Code 403
 * Failure - Slack ID Not Found: Response Code 404
+
 ```node
 {
   message: String
 }
 ```
 
-
 ## `PUT /event/reactivate`
+
 Restores a previously deleted event provided with an ID.
 
 ### Request
-##### Header
+
+#### Header
+
 ```node
   api_key: String,
   slack_id: String
 ```
-##### Body
+
+#### Body
+
 ```node
 {
   check_in_code: String
 }
 ```
+
 ### Response
+
 * Success: Response Code 200
 * Failure - Missing Fields: Response Code 400
 * Failure - Bad API Key: Response Code 401
 * Failure - Not an Admin in Slack team: Response Code 401
 * Failure - Wrong Check In Code: Response Code 403
 * Failure - Slack ID Not Found: Response Code 404
+
 ```node
 {
   message: String
@@ -281,31 +347,97 @@ Restores a previously deleted event provided with an ID.
 ```
 
 ## `GET /users/scores`
-Renders a page with all users and their scores.
+
+Gets all of the users and their scores (in descending order).
+
+### Request
+
+Just a basic `GET` request will do.
+
+### Response
+
+```node
+{
+  [
+    {
+      'username': String,
+      'slack_id': String,
+      'events': [String, String, ...],
+      'score': Integer
+    },
+  ...
+  ]
+}
+```
 
 ## `POST /users/scores/edit`
+
 Add the score passed in to the users current score. So to add pass a positive number and to subtract, send a negative number. The `slack_id` in the header is the admin id and the `slack_id` in the body is for the user that will be updated.
 
 ### Request
-##### Header
+
+#### Header
+
 ```node
   api_key: String,
   slack_id: String
 ```
-##### Body
+
+#### Body
+
 ```node
 {
   score: Float,
   slack_id: String
 }
 ```
+
 ### Response
+
 * Success: Response Code 200
 * Failure - Missing Fields: Response Code 400
 * Failure - Bad API Key: Response Code 401
 * Failure - Not an Admin in Slack team: Response Code 401
 * Failure - Wrong Check In Code: Response Code 403
 * Failure - Slack ID Not Found: Response Code 404
+
+```node
+{
+  message: String
+}
+```
+
+## `GET /event/<check_in_code>`
+
+Get details of an event including a list of all the attendees.
+
+### Request
+
+Just a basic `GET` request to this route with the check in code for
+the event as a parameter.
+
+### Response
+
+* Success: Response Code 200
+
+```node
+{
+  event: {
+    active: Boolean,
+    check_in_code: String,
+    deleted: Boolean,
+    name: String,
+    slack_id: String,
+    timestamp: String,
+    weight: Integer
+  }
+  attendees: [String, String, ...],
+  count: Integer
+}
+```
+
+* Failure - Wrong Check In Code: Response Code 403
+
 ```node
 {
   message: String
