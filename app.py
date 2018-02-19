@@ -3,12 +3,12 @@ from pymongo import MongoClient
 from datetime import datetime
 from verification import verify_user, verify_api_key, verify_admin
 from utils import generate_check_in_code, toggle_active_delete
-from config import SUCCESS, SLACK_ID_NOT_FOUND, WRONG_CHECK_IN_CODE, MISSING_FIELDS, MONGO_URI
+import config as con
 import os
 
 app = Flask(__name__)
 
-client = MongoClient(MONGO_URI)
+client = MongoClient(con.MONGO_URI)
 db = client.chicken
 
 
@@ -25,18 +25,18 @@ def check_in():
     username = request.get_json().get('username')
 
     if username is None:
-        return jsonify(MISSING_FIELDS), 400
+        return jsonify(con.MISSING_FIELDS), 400
 
     # First verify the user is valid
     if not verify_user(slack_id):
-        return jsonify(SLACK_ID_NOT_FOUND), 404
+        return jsonify(con.SLACK_ID_NOT_FOUND), 404
 
     # Then verify the event exists and is active
     events = db.events
     event = events.find_one({'check_in_code': check_in_code})
 
     if event is None or not event.get('active'):
-        return jsonify(WRONG_CHECK_IN_CODE), 403
+        return jsonify(con.WRONG_CHECK_IN_CODE), 403
 
     # Then query for the user
     users = db.users
@@ -65,7 +65,7 @@ def check_in():
         events.update_one({'check_in_code': check_in_code}, {
                           '$push': {'attendees': slack_id}})
 
-    return jsonify(SUCCESS), 200
+    return jsonify(con.SUCCESS), 200
 
 
 @app.route('/event/new', methods=['POST'])
@@ -85,7 +85,7 @@ def start_checkin():
         weight = 1.0
 
     if name is None or slack_id is None:
-        return jsonify(MISSING_FIELDS), 400
+        return jsonify(con.MISSING_FIELDS), 400
 
     check_in_code = generate_check_in_code()
     events = db.events
@@ -155,11 +155,11 @@ def close_event():
     event = db.events.find_one({'check_in_code': check_in_code})
 
     if event is None or event.get('deleted') or not event.get('active'):
-        return jsonify(WRONG_CHECK_IN_CODE), 403
+        return jsonify(con.WRONG_CHECK_IN_CODE), 403
 
     toggle_active_delete(db, check_in_code, active=False)
 
-    return jsonify(SUCCESS), 200
+    return jsonify(con.SUCCESS), 200
 
 
 @app.route('/event/reopen', methods=['PUT'])
@@ -170,11 +170,11 @@ def reactivate_event():
     event = db.events.find_one({'check_in_code': check_in_code})
 
     if event is None or event.get('active'):
-        return jsonify(WRONG_CHECK_IN_CODE), 403
+        return jsonify(con.WRONG_CHECK_IN_CODE), 403
 
     toggle_active_delete(db, check_in_code, active=True)
 
-    return jsonify(SUCCESS), 200
+    return jsonify(con.SUCCESS), 200
 
 
 @app.route('/event/delete', methods=['PUT'])
@@ -185,11 +185,11 @@ def delete_event():
     event = db.events.find_one({'check_in_code': check_in_code})
 
     if event is None or event.get('deleted'):
-        return jsonify(WRONG_CHECK_IN_CODE), 403
+        return jsonify(con.WRONG_CHECK_IN_CODE), 403
 
     toggle_active_delete(db, check_in_code, active=False, delete=True)
 
-    return jsonify(SUCCESS), 200
+    return jsonify(con.SUCCESS), 200
 
 
 @app.route('/event/reactivate', methods=['PUT'])
@@ -200,11 +200,11 @@ def restore_event():
     event = db.events.find_one({'check_in_code': check_in_code})
 
     if event is None or not event.get('deleted'):
-        return jsonify(WRONG_CHECK_IN_CODE), 403
+        return jsonify(con.WRONG_CHECK_IN_CODE), 403
 
     toggle_active_delete(db, check_in_code, active=True, delete=False)
 
-    return jsonify(SUCCESS), 200
+    return jsonify(con.SUCCESS), 200
 
 
 @app.route('/score', methods=['GET'])
@@ -214,7 +214,7 @@ def get_score():
 
     # verify this is a slack user
     if not verify_user(slack_id):
-        return jsonify(SLACK_ID_NOT_FOUND), 404
+        return jsonify(con.SLACK_ID_NOT_FOUND), 404
 
     # check if the user is in db, add if not
     user = db.users.find_one({'slack_id': slack_id})
@@ -229,7 +229,9 @@ def get_score():
 def get_all_scores():
     users = db.users.find({})
     users = sorted(users, key=lambda x: x['score'], reverse=True)
-    return render_template('users.html', users=users)
+
+    return jsonify(users)
+    # return render_template('users.html', users=users)
 
 
 @app.route('/users/scores/edit', methods=['POST'])
@@ -240,11 +242,11 @@ def edit_score():
     score = request.get_json().get('score')
 
     if score is None:
-        return jsonify(MISSING_FIELDS), 400
+        return jsonify(con.MISSING_FIELDS), 400
 
     # verify this is a slack user
     if not verify_user(slack_id):
-        return jsonify(SLACK_ID_NOT_FOUND), 404
+        return jsonify(con.SLACK_ID_NOT_FOUND), 404
 
     user = db.users.find_one({'slack_id': slack_id})
 
@@ -253,9 +255,10 @@ def edit_score():
     if user is not None:
         db.users.update_one({'slack_id': slack_id}, {
                             '$set': {'score': updated_score}})
-        return jsonify(SUCCESS), 200
+        return jsonify(con.SUCCESS), 200
 
-    return jsonify(SLACK_ID_NOT_FOUND), 404
+    return jsonify(con.SLACK_ID_NOT_FOUND), 404
+
 
 @app.route('/events/<check_in_code>', methods=['GET'])
 def view_attendees(check_in_code):
@@ -268,7 +271,11 @@ def view_attendees(check_in_code):
             user = db.users.find_one({'slack_id': attendee})
             users.append(user.get('username'))
 
-    return render_template("events.html", users=users, event=event, count=len(users))
+    return render_template("events.html",
+                           users=users,
+                           event=event,
+                           count=len(users))
+
 
 # Runs the app
 if __name__ == '__main__':
