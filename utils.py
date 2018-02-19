@@ -3,7 +3,8 @@ import string
 
 
 def generate_check_in_code():
-    return ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(5))
+    return ''.join(random.choice(string.ascii_lowercase + string.digits)
+                   for _ in range(5))
 
 
 def toggle_active_delete(db, check_in_code, active, delete=False):
