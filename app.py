@@ -287,6 +287,5 @@ def view_attendees(check_in_code):
     })
 
 
-# Runs the app
 if __name__ == '__main__':
-    app.run(port=int(os.environ.get('PORT', 5000)), debug=True)
+    app.run(port=int(os.environ.get('PORT', 5000)))
