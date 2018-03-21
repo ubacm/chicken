@@ -5,8 +5,10 @@ from verification import verify_user, verify_api_key, verify_admin
 from utils import generate_check_in_code, toggle_active_delete
 import config as con
 import os
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
 
 client = MongoClient(con.MONGO_URI)
 db = client.chicken

@@ -16,3 +16,4 @@ config.old.py
 # Score Migration
 scores.csv
 migrate.py
+user_lookup.py
