@@ -1,6 +1,6 @@
 # chicken
 
-The check in system for UB ACM events.
+The check in system for UB ACM events. Current production version can be found at - https://checkin-chicken.herokuapp.com/
 
 ## `POST /checkin`
 
